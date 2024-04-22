@@ -1,27 +1,35 @@
 FROM ubuntu:jammy
 
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Instala paquetes de desarrollo
 RUN apt-get update && apt-get upgrade -y
+RUN apt-get install -y build-essential procps curl file git gdb vim zip
 
-RUN apt-get install -y build-essential procps curl file git
-RUN NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-RUN eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-ENV PATH="/home/linuxbrew/.linuxbrew/bin:${PATH}"
+# Instala rvm
+RUN apt-get install -y rbenv
 
-RUN brew update && brew upgrade
-RUN apt-get install -y vim
-RUN brew install gcc
-RUN brew install gdb
-RUN brew install make
-RUN brew install zip
+# Instala Ruby 2.7.1 (Depende en OpenSSL 1.1.1g)
+# https://deanpcmad.com/2022/installing-older-ruby-versions-on-ubuntu-22-04/
+RUN curl https://www.openssl.org/source/openssl-1.1.1g.tar.gz --output openssl-1.1.1g.tar.gz
+RUN tar zxvf openssl-1.1.1g.tar.gz
+RUN cd openssl-1.1.1g && ./config --prefix=$HOME/.openssl/openssl-1.1.1g --openssldir=$HOME/.openssl/openssl-1.1.1g
+RUN make -C openssl-1.1.1g
+RUN make -C openssl-1.1.1g install
+RUN rm -rf ~/.openssl/openssl-1.1.1g/certs
+RUN ln -s /etc/ssl/certs ~/.openssl/openssl-1.1.1g/certs
 
-RUN brew install ruby@2.7
-ENV PATH="/home/linuxbrew/.linuxbrew/opt/ruby@2.7/bin:$PATH"
-ENV PATH="/home/linuxbrew/.linuxbrew/lib/ruby/gems/2.7.0/bin:$PATH"
-ENV LDFLAGS="-L/home/linuxbrew/.linuxbrew/opt/ruby@2.7/lib"
-ENV CPPFLAGS="-I/home/linuxbrew/.linuxbrew/opt/ruby@2.7/include"
+RUN RUBY_CONFIGURE_OPTS=--with-openssl-dir=$HOME/.openssl/openssl-1.1.1g rbenv install --verbose 2.7.1
+RUN rbenv global 2.7.1
 
+# Instala Ceedling
 RUN gem install ceedling
 ENV LANGUAGE=C.utf8
 ENV LC_ALL=C.utf8
 ENV LANG=C.utf8
-RUN ln -s /home/linuxbrew/.linuxbrew/bin/gcc-12 /home/linuxbrew/.linuxbrew/bin/gcc
+
+# Instala Python 3.12
+RUN apt-get install -y software-properties-common
+RUN add-apt-repository -y ppa:deadsnakes/ppa && \
+    apt-get update && \
+    apt-get install -y python3.12
