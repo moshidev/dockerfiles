@@ -2,6 +2,8 @@ FROM ubuntu:jammy
 
 # Evita que se detenga la instalación de paquetes por falta de interacción
 ENV DEBIAN_FRONTEND=noninteractive
+ENV LANG C.UTF-8
+ENV LC_ALL C.UTF-8
 
 # Actualiza el sistema
 RUN apt-get update && apt-get upgrade -y
@@ -23,3 +25,9 @@ RUN apt-get install -y software-properties-common && \
     add-apt-repository -y ppa:deadsnakes/ppa && \
     apt-get update && \
     apt-get install -y python3.12
+
+# Instala make
+RUN apt-get install -y make
+
+# Instala git y vim
+RUN apt-get install -y git vim
