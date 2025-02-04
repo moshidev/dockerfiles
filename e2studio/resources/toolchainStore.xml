@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<toolchainStore version="1">
+  <toolchain enabled="true" name="GNU ARM Embedded" path="/opt/gccarm/arm-gnu-toolchain-12.3.rel1-x86_64-arm-none-eabi/" typeId="gcc-arm-embedded" version="13.2.1.arm-13-7"/>
+</toolchainStore>
