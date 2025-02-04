@@ -36,5 +36,7 @@ COPY ./resources/e2studio/ /opt/e2studio
 # Copy toolchain registration info. Modify this file as required
 COPY ./resources/toolchainStore.xml /opt/e2studio/eclipse/configuration/com.renesas.cdt.core/toolchainStore.xml
 
+ENV E2STUDIOC=/opt/e2studio/eclipse/e2studio
+
 #docker run --rm -it -v <full-path to directory to be mounted>:/work/ e2studio --launcher.suppressErrors -nosplash -application org.eclipse.cdt.managedbuilder.core.headlessbuild -data /work/.tmpwk -import /work/<project> -no-indexer -markerType cdt
 ENTRYPOINT [ "/opt/e2studio/eclipse/e2studio", "--launcher.suppressErrors", "-nosplash", "-application", "org.eclipse.cdt.managedbuilder.core.headlessbuild" ]
